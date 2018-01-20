@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "521233192018",
+    "firebase_url": "https://smsmanager-cc7b8.firebaseio.com",
+    "project_id": "smsmanager-cc7b8",
+    "storage_bucket": "smsmanager-cc7b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521233192018:android:ec66eb096d0a34ac",
+        "android_client_info": {
+          "package_name": "sms.newgate.com.smseditor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521233192018-tbmr8qlfqirgp2lb4lj6fdov25i3aecj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sms.newgate.com.smseditor",
+            "certificate_hash": "63ae55092c720e7844527d64fa944214d8ab10f7"
+          }
+        },
+        {
+          "client_id": "521233192018-omrc8eq80d03d49fs5g63clln49i3n1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxz0OJtxIHwGtgc_9xdHRbb3GmzSSmXAU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521233192018-omrc8eq80d03d49fs5g63clln49i3n1k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
