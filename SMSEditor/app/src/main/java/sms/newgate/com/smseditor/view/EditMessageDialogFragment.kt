@@ -26,7 +26,7 @@ class EditMessageDialogFragment : DialogFragment() {
 
     internal var uri = Uri.parse("content://sms")
 
-    var smsMessageId: String? = ""
+    var smsMessageId: String = ""
 
     companion object {
         fun newInstance(smsThread: SmsThread): EditMessageDialogFragment {

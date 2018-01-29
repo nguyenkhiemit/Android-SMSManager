@@ -1,4 +1,4 @@
-package sms.newgate.com.smseditor.model
+package sms.newgate.com.smseditorremote
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -6,10 +6,11 @@ import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 
 /**
- * Created by apple on 1/17/18.
+ * Created by apple on 1/28/18.
  */
+
 @IgnoreExtraProperties
-class SmsThread: Parcelable {
+class Message : Parcelable {
 
     var id: String = ""
     var threadId: String = ""
@@ -21,11 +22,11 @@ class SmsThread: Parcelable {
     constructor()
 
     constructor(id: String,
-                threadId: String,
-                address: String,
-                body: String,
-                date: String,
-                type: String) {
+            threadId: String,
+            address: String,
+            body: String,
+            date: String,
+            type: String) {
         this.id = id
         this.threadId = threadId
         this.address = address
@@ -35,12 +36,12 @@ class SmsThread: Parcelable {
     }
 
     constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString())
+    parcel.readString(),
+    parcel.readString(),
+    parcel.readString(),
+    parcel.readString(),
+    parcel.readString(),
+    parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
@@ -55,12 +56,12 @@ class SmsThread: Parcelable {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<SmsThread> {
-        override fun createFromParcel(parcel: Parcel): SmsThread {
-            return SmsThread(parcel)
+    companion object CREATOR : Parcelable.Creator<Message> {
+        override fun createFromParcel(parcel: Parcel): Message {
+            return Message(parcel)
         }
 
-        override fun newArray(size: Int): Array<SmsThread?> {
+        override fun newArray(size: Int): Array<Message?> {
             return arrayOfNulls(size)
         }
     }

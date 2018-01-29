@@ -42,7 +42,7 @@ class DetailMessageActivity: AppCompatActivity() {
 
         adapter = MsgDetailAdapter(smsThreads, object: MsgDetailAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
-                openDialogEditor(pos)
+//                openDialogEditor(pos)
             }
 
         })
@@ -61,7 +61,6 @@ class DetailMessageActivity: AppCompatActivity() {
 
             override fun editMessage(newSmsThread: SmsThread) {
                 helper.updateMessage(newSmsThread)
-//                helper.storeMessage()
             }
 
         })

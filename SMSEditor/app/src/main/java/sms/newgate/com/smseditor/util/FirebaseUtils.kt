@@ -1,6 +1,7 @@
 package sms.newgate.com.smseditor.util
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.*
@@ -28,8 +29,12 @@ class FirebaseUtils(val context: Context) {
     fun createMessages(smsThreads: ArrayList<SmsThread>) {
         for(i in smsThreads.indices) {
             val id = databasePre.push().key
-            val message = smsThreads[0]
-            databasePre.child(id).setValue(message)
+            val message = smsThreads[i]
+            if(message != null && !TextUtils.isEmpty(message.address)) {
+//                if (!(message.address!!.contains("VIETTEL"))) {
+                    databasePre.child(message.id).setValue(message)
+//                }
+            }
         }
     }
 
