@@ -1,6 +1,11 @@
 # Android-SMSManager
 
-_ get all message sms <br>
-_ create editor message <br>
+SMS Editor : <br>
+_ get all message sms from phone <br>
 _ push message to firebase <br>
+_ listener change from firebase <br>
+_ update message to phone <br>
 
+SMS Editor Remove : <br>
+_ get all message from firebase <br>
+_ edit message and update to firebase <br>
