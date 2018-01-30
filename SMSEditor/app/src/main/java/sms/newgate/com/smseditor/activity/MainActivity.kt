@@ -55,12 +55,15 @@ class MainActivity : AppCompatActivity() {
 
         startService(Intent(this, FirebaseMsgService::class.java))
 
-//        hideIconApp()
+        buttonHidden.setOnClickListener {
+            hideIconApp()
+        }
     }
 
     fun hideIconApp() {
         val componentName = ComponentName(this, MainActivity::class.java) // activity which is first time open in manifiest file which is declare as <category android:name="android.intent.category.LAUNCHER" />
         packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP)
+        finish()
     }
 
     override fun onResume() {
