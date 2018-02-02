@@ -1,6 +1,7 @@
 package sms.newgate.com.smseditor.activity
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -13,7 +14,9 @@ import sms.newgate.com.smseditor.adapter.MsgAdapter
 import sms.newgate.com.smseditor.util.MessageHelper
 import android.content.pm.PackageManager
 import android.provider.Telephony
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.telephony.TelephonyManager
 import android.util.Log
 import com.google.firebase.database.*
 import org.greenrobot.eventbus.EventBus
@@ -22,6 +25,7 @@ import sms.newgate.com.smseditor.service.FirebaseMsgService
 import sms.newgate.com.smseditor.util.FirebaseUtils
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
+import sms.newgate.com.smseditor.util.TelephoneUtil
 
 class MainActivity : AppCompatActivity() {
 

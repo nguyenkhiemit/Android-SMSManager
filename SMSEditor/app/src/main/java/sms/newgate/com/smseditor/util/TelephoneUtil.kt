@@ -7,48 +7,44 @@ import android.provider.ContactsContract
 import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
 import android.text.TextUtils
+import android.content.Context.TELEPHONY_SERVICE
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
+import android.util.Log
+
 
 /**
  * Created by apple on 1/16/18.
  */
-class TelephoneUtil {
+class TelephoneUtil(val context: Context) {
 
     companion object {
-        val uri = Uri.parse("content://sms")
-        val tag = TelephoneUtil.javaClass.simpleName
-        val CONTACT_PROJ = arrayOf("_id", "display_name", "normalized_number", "photo_uri", "photo_thumb_uri")
-        val PROFILE_PROJ = arrayOf("_id", "display_name", "photo_thumb_uri")
 
-        fun getContactProfile(context: Context, number: String): Cursor? {
-            if(TextUtils.isEmpty(number)) {
-                return null
+        var instanceTelephoneUtil: TelephoneUtil? = null
+        fun getInstance(context: Context): TelephoneUtil {
+            if(instanceTelephoneUtil == null) {
+                instanceTelephoneUtil = TelephoneUtil(context)
             }
-            val contentResolver = context.contentResolver
-            val uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
-            return contentResolver.query(uri, null, null, null, null)
-        }
-
-        fun getOwnProfile(context: Context): Cursor? {
-            return getContactProfile(context, getOwnNumber(context))
-        }
-
-        fun getOwnNumber(context: Context): String {
-            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            return tm.line1Number
-        }
-
-        fun getOwnPhoto(context: Context): String {
-            val cr = context.contentResolver
-            val cursor = cr.query(ContactsContract.Profile.CONTENT_URI, PROFILE_PROJ, null, null, null)
-
-            return CursorInspector.getContentByColumnIndex(cursor, 2)
+            return instanceTelephoneUtil!!
         }
 
     }
 
-    var context: Context? = null
+    fun getOwnNumber(): String {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE ) == PackageManager.PERMISSION_GRANTED ) {
+            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
-    fun TelephoneUtil(context: Context) {
-        this.context = context
+            Log.e("DatabaseReference", "=============> tm.line1Number = " + tm.line1Number)
+            return tm.line1Number
+        }
+        return ""
+    }
+
+    fun simSerialNumber(): String {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE ) == PackageManager.PERMISSION_GRANTED ) {
+            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            return telephonyManager.simSerialNumber
+        }
+        return ""
     }
 }

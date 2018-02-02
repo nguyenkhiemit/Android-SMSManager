@@ -3,13 +3,12 @@ package sms.newgate.com.smseditorremote
 import android.app.DialogFragment
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import kotlinx.android.synthetic.main.layout_edit_msg.*
 /**
  * Created by apple on 1/28/18.
@@ -36,10 +35,15 @@ class EditMessageDialogFragment : DialogFragment() {
         return inflater.inflate(R.layout.layout_edit_msg, container)
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+    }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        dialog.window.setLayout(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        dialog.window.requestFeature(Window.FEATURE_NO_TITLE)
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         val message = arguments.getParcelable<Message>("smsthread")
         addressEditText.setText(message.address)
