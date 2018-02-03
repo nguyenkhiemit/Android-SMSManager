@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/messageLayout"
+    android:id="@+id/messageLayoutFriend"
+    android:layout_marginRight="80dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_message"
-    android:layout_marginLeft="80dp"
     android:layout_marginBottom="8dp"
     android:orientation="horizontal">
 
+    <ImageView
+        android:id="@+id/avatarImageFriend"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_margin="8dp"
+        android:visibility="visible" />
+
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/addressText"
+            android:id="@+id/addressTextFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/bodyText"
+            android:id="@+id/bodyTextFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/avatarImage"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_margin="8dp"/>
 
 </LinearLayout>

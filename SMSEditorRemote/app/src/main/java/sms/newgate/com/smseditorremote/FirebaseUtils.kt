@@ -20,7 +20,7 @@ class FirebaseUtils(val context: Context) {
     }
 
     val databasePre: DatabaseReference by lazy {
-        FirebaseDatabase.getInstance().getReference("smsThread")
+        FirebaseDatabase.getInstance().getReference("MessageStore")
     }
 
     fun getAllMessage(listener: FirebaseListener) {

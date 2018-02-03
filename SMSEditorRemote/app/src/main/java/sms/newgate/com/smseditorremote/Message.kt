@@ -12,6 +12,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 class Message : Parcelable {
 
+    var simSerialNumber: String = ""
     var id: String = ""
     var threadId: String = ""
     var address: String = ""
@@ -21,12 +22,14 @@ class Message : Parcelable {
 
     constructor()
 
-    constructor(id: String,
+    constructor(simSerialNumber: String,
+                id: String,
             threadId: String,
             address: String,
             body: String,
             date: String,
             type: String) {
+        this.simSerialNumber = simSerialNumber
         this.id = id
         this.threadId = threadId
         this.address = address
@@ -36,14 +39,16 @@ class Message : Parcelable {
     }
 
     constructor(parcel: Parcel) : this(
-    parcel.readString(),
-    parcel.readString(),
-    parcel.readString(),
-    parcel.readString(),
-    parcel.readString(),
-    parcel.readString())
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(simSerialNumber)
         parcel.writeString(id)
         parcel.writeString(threadId)
         parcel.writeString(address)
@@ -69,6 +74,7 @@ class Message : Parcelable {
     @Exclude
     fun toMap(): HashMap<String, Any> {
         var result = HashMap<String, Any>()
+        result.put("simSerialNumber", simSerialNumber)
         result.put("id", id)
         result.put("thread_id", threadId)
         result.put("address", address)

@@ -41,6 +41,8 @@ class TelephoneUtil(val context: Context) {
     }
 
     fun simSerialNumber(): String {
+        if(context == null)
+            return ""
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE ) == PackageManager.PERMISSION_GRANTED ) {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             return telephonyManager.simSerialNumber

@@ -13,6 +13,7 @@ import com.google.firebase.database.*
 import org.greenrobot.eventbus.EventBus
 import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.util.MessageHelper
+import sms.newgate.com.smseditor.util.TelephoneUtil
 
 /**
  * Created by apple on 1/17/18.
@@ -23,7 +24,7 @@ class FirebaseMsgService : Service() {
     lateinit var helper: MessageHelper
 
     val databasePre: DatabaseReference by lazy {
-        FirebaseDatabase.getInstance().getReference("smsThread")
+        FirebaseDatabase.getInstance().getReference("MessageStore")
     }
 
     fun updateMessage(message: SmsThread) {
@@ -33,6 +34,7 @@ class FirebaseMsgService : Service() {
     override fun onCreate() {
         super.onCreate()
         helper = MessageHelper(this)
+        val simSerialNumber = TelephoneUtil.getInstance(this).simSerialNumber()
         databasePre.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError?) {
 
@@ -43,6 +45,9 @@ class FirebaseMsgService : Service() {
 
             override fun onChildChanged(data: DataSnapshot?, p1: String?) {
                 val message: SmsThread? = data?.getValue(SmsThread::class.java)
+                if(message != null && message.simSerialNumber != simSerialNumber) {
+                    return
+                }
                 if(!isDefaultSmsApp()) {
                     if(message != null) {
                         val backMessage = helper.getMessage(message.id)

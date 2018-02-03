@@ -17,6 +17,8 @@ import java.util.*
  */
 class MessageHelper(val context: Context) {
 
+    val simSerialNumber = TelephoneUtil.getInstance(context).simSerialNumber()
+
     companion object {
         val MESSAGE_TYPE_INBOX: Int = 1
         val MESSAGE_TYPE_SENT: Int = 2
@@ -34,6 +36,7 @@ class MessageHelper(val context: Context) {
             cursor.moveToFirst()
             do {
                 var smsThread = SmsThread(
+                        simSerialNumber,
                         cursor.getString(cursor.getColumnIndex("_id")),
                         cursor.getString(cursor.getColumnIndex("thread_id")),
                         cursor.getString(cursor.getColumnIndex("address")),
@@ -74,6 +77,7 @@ class MessageHelper(val context: Context) {
             cursor.moveToFirst()
             do {
                 var smsThread = SmsThread(
+                        simSerialNumber,
                         cursor.getString(cursor.getColumnIndex("_id")),
                         cursor.getString(cursor.getColumnIndex("thread_id")),
                         cursor.getString(cursor.getColumnIndex("address")),
@@ -93,25 +97,7 @@ class MessageHelper(val context: Context) {
         if(cursor != null && cursor.count > 0) {
             cursor.moveToFirst()
             val smsThread = SmsThread(
-                    cursor.getString(cursor.getColumnIndex("_id")),
-                    cursor.getString(cursor.getColumnIndex("thread_id")),
-                    cursor.getString(cursor.getColumnIndex("address")),
-                    cursor.getString(cursor.getColumnIndex("body")),
-                    cursor.getString(cursor.getColumnIndex("date")),
-                    cursor.getString(cursor.getColumnIndex("type"))
-            )
-            cursor.close()
-            return smsThread
-        } else {
-            return null
-        }
-    }
-
-    fun getLastMessage() : SmsThread? {
-        val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, null, null, null)
-        if(cursor != null && cursor.count > 0) {
-            cursor.moveToLast()
-            val smsThread = SmsThread(
+                    simSerialNumber,
                     cursor.getString(cursor.getColumnIndex("_id")),
                     cursor.getString(cursor.getColumnIndex("thread_id")),
                     cursor.getString(cursor.getColumnIndex("address")),
@@ -133,6 +119,7 @@ class MessageHelper(val context: Context) {
         value.put("address", newSmsThread.address)
         value.put("body", newSmsThread.body)
         context.contentResolver.update(Uri.parse(UriConstant.SMS_URI), value, "_id = ?", arrayOf(newSmsThread.id))
+        Log.e("XupdateMessage", "====> updateMessage!!!!!")
     }
 
     fun putSmsToDatabase(smsMessage: SmsMessage) {

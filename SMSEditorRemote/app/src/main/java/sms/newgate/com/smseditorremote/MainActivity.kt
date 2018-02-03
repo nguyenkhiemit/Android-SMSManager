@@ -12,6 +12,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var arrayMessage: ArrayList<Message>
 
+    lateinit var arraySimMessage: ArrayList<Message>
+
+    var address = ""
+
     val firebaseInstance by lazy {
         FirebaseUtils.getInstance(this)
     }
@@ -20,18 +24,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         arrayMessage = arrayListOf()
-        firebaseInstance.getAllMessage(object: FirebaseUtils.FirebaseListener {
-            override fun getAllMessageListener(message: Message) {
-                if(!checkMessage(message)) {
-                    arrayMessage.add(message)
-                } else {
-                    deleteMessage(message.id)
-                    arrayMessage.add(message)
-                }
-                adapter.notifyDataSetChanged()
-            }
 
-        })
+        address = intent.extras.getString("address")
+
+        title = address
+
+        arraySimMessage = intent.extras.getParcelableArrayList("simmessage")
+
+        arrayMessage.addAll(checkMessageAddress())
 
         adapter = MsgAdapter(arrayMessage, object: MsgAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
@@ -41,6 +41,16 @@ class MainActivity : AppCompatActivity() {
         })
         msgThreadRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         msgThreadRecyclerView.adapter = adapter
+    }
+
+    fun checkMessageAddress() : ArrayList<Message> {
+        var arrayMessage: ArrayList<Message> = arrayListOf()
+        for(i in  arraySimMessage.indices) {
+            if(arraySimMessage[i].address == address) {
+                arrayMessage.add(arraySimMessage[i])
+            }
+        }
+        return arrayMessage
     }
 
     fun deleteMessage(messageId: String) {
