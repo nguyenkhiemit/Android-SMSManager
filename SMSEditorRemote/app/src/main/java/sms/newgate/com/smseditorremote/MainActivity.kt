@@ -3,6 +3,7 @@ package sms.newgate.com.smseditorremote
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     fun deleteMessage(messageId: String) {
         for(i in  arrayMessage.indices) {
             if(arrayMessage[i].id == messageId) {
+                Log.e("Xchange", "2 ===> " + arrayMessage[i].body)
                 arrayMessage.removeAt(i)
                 break
             }
@@ -78,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun editMessage(message: Message) {
                 firebaseInstance.updateMessage(message)
+                adapter.notifyDataSetChanged()
             }
 
         })
