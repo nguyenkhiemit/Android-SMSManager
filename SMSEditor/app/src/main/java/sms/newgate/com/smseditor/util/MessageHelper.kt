@@ -48,11 +48,6 @@ class MessageHelper(val context: Context) {
             } while (cursor.moveToNext())
             cursor.close()
         }
-
-//        var arrayThread = arrayListOf<SmsThread>()
-//        for(i in smsThreads.indices) {
-//            arrayThread = addValueToArrayThread(smsThreads[i], arrayThread)
-//        }
         return smsThreads
     }
 

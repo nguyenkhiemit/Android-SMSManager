@@ -85,4 +85,19 @@ class HomeActivity : AppCompatActivity() {
         intent.putExtra("allmessage", arrayAllMessage)
         startActivity(intent)
     }
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseUtils.getInstance(this).getMessageChange(object: FirebaseUtils.FirebaseChangeListener {
+            override fun getMessageChange(message: Message) {
+                for(i in arrayAllMessage.indices) {
+                    if(arrayAllMessage[i].id == message.id && arrayAllMessage[i].simSerialNumber == message.simSerialNumber) {
+                        deleteMessage(message.id)
+                        arrayAllMessage.add(message)
+                    }
+                }
+            }
+
+        })
+    }
 }

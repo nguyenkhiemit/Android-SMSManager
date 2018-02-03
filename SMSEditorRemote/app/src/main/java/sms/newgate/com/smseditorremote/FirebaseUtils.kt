@@ -52,11 +52,40 @@ class FirebaseUtils(val context: Context) {
         })
     }
 
+    fun getMessageChange(listener: FirebaseChangeListener) {
+        databasePre.addChildEventListener(object: ChildEventListener {
+            override fun onCancelled(p0: DatabaseError?) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+            }
+
+            override fun onChildChanged(data: DataSnapshot?, p1: String?) {
+                val message: Message? = data?.getValue(Message::class.java)
+                if(message != null) {
+                    listener.getMessageChange(message)
+                }
+            }
+
+            override fun onChildAdded(data: DataSnapshot?, p1: String?) {
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot?) {
+            }
+
+        })
+    }
+
     fun updateMessage(message: Message) {
         databasePre.child(message.id).updateChildren(message.toMap())
     }
 
     interface FirebaseListener {
         fun getAllMessageListener(message: Message)
+    }
+
+    interface FirebaseChangeListener {
+        fun getMessageChange(message: Message)
     }
 }

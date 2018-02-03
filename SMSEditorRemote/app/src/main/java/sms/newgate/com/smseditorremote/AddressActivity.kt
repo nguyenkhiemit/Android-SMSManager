@@ -88,4 +88,30 @@ class AddressActivity : AppCompatActivity() {
         intent.putExtra("simmessage", arraySimMessage)
         startActivity(intent)
     }
+
+    fun deleteMessage(messageId: String) {
+        for(i in  arraySimMessage.indices) {
+            if(arraySimMessage[i].id == messageId) {
+                arraySimMessage.removeAt(i)
+                break
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseUtils.getInstance(this).getMessageChange(object: FirebaseUtils.FirebaseChangeListener {
+            override fun getMessageChange(message: Message) {
+                if(message.simSerialNumber != simNumber)
+                    return
+                for(i in arraySimMessage.indices) {
+                    if(arraySimMessage[i].id == message.id) {
+                        deleteMessage(message.id)
+                        arraySimMessage.add(message)
+                    }
+                }
+            }
+
+        })
+    }
 }

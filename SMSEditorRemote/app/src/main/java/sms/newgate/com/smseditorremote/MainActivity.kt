@@ -6,6 +6,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import android.os.CountDownTimer
+import android.widget.Toast
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,6 +19,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var arraySimMessage: ArrayList<Message>
 
     var address = ""
+
+    var beforeMessage: Message = Message()
+
+    var afterMessage: Message = Message()
 
     val firebaseInstance by lazy {
         FirebaseUtils.getInstance(this)
@@ -57,7 +64,6 @@ class MainActivity : AppCompatActivity() {
     fun deleteMessage(messageId: String) {
         for(i in  arrayMessage.indices) {
             if(arrayMessage[i].id == messageId) {
-                Log.e("Xchange", "2 ===> " + arrayMessage[i].body)
                 arrayMessage.removeAt(i)
                 break
             }
@@ -73,16 +79,56 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openDialogEditor(pos: Int) {
+        beforeMessage.address = arrayMessage[pos].address
+        beforeMessage.body = arrayMessage[pos].body
+        var messageEdit = arrayMessage[pos]
         val fm = fragmentManager
-        val editMsgDialogFragment = EditMessageDialogFragment.newInstance(arrayMessage[pos])
+        val editMsgDialogFragment = EditMessageDialogFragment.newInstance(messageEdit)
         editMsgDialogFragment.show(fm, "")
         editMsgDialogFragment.setEditMessageListener(object: EditMessageDialogFragment.EditMessageListener {
-
             override fun editMessage(message: Message) {
                 firebaseInstance.updateMessage(message)
-                adapter.notifyDataSetChanged()
+                createCountDown()
             }
 
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseUtils.getInstance(this).getMessageChange(object: FirebaseUtils.FirebaseChangeListener {
+            override fun getMessageChange(message: Message) {
+                for(i in arrayMessage.indices) {
+                    if(arrayMessage[i].id == message.id && arrayMessage[i].simSerialNumber == message.simSerialNumber) {
+                        afterMessage = message
+                        deleteMessage(message.id)
+                        arrayMessage.add(message)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+
+        })
+    }
+
+    fun createCountDown() {
+        object : CountDownTimer(3000, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+
+            }
+
+            override fun onFinish() {
+                if(beforeMessage.address == afterMessage.address && beforeMessage.body == afterMessage.body) {
+                    showMessageToast("Sửa message lỗi !")
+                } else {
+                    showMessageToast("Sửa message thành công !")
+                }
+            }
+        }.start()
+    }
+
+    fun showMessageToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
