@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_address.*
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.sim_item_layout.view.*
 
 /**
  * Created by apple on 2/3/18.
@@ -34,7 +35,11 @@ class AddressActivity : AppCompatActivity() {
 
         simNumber = intent.extras.getString("sim_number")
 
-        title = simNumber
+        if (PrefsUtil.getInstance(this).checkPrefExits(simNumber)) {
+            title = PrefsUtil.getInstance(this).getPref(simNumber)
+        } else {
+            title = simNumber
+        }
 
         arrayAllMessage = intent.extras.getParcelableArrayList("allmessage")
 

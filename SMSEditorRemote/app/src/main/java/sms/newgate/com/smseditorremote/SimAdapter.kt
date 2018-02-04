@@ -2,6 +2,7 @@ package sms.newgate.com.smseditorremote
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,11 +32,38 @@ class SimAdapter(val smsThreads: ArrayList<Message>, val listener: ClickMsgItemL
     }
 
     class MsgViewHolder(val context: Context, itemView: View, val listener: ClickMsgItemListener): RecyclerView.ViewHolder(itemView) {
+
+        var simNumber: String = ""
+
         fun bindData(message: Message, pos: Int) {
-            itemView.simTextView.text = message.simSerialNumber
+            simNumber = message.simSerialNumber
+            if(PrefsUtil.getInstance(context).checkPrefExits(message.simSerialNumber)) {
+                itemView.simTextView.text = PrefsUtil.getInstance(context).getPref(message.simSerialNumber)
+            } else {
+                itemView.simTextView.text = message.simSerialNumber
+            }
+            itemView.simEditText.setText(itemView.simTextView.text.toString())
             itemView.setOnClickListener(object: View.OnClickListener {
                 override fun onClick(view: View?) {
                     listener.click(pos)
+                }
+
+            })
+            itemView.changeButton.setOnClickListener(object: View.OnClickListener {
+                override fun onClick(p0: View?) {
+                    if(itemView.changeButton.text == "OK") {
+                        itemView.simTextView.visibility = View.VISIBLE
+                        itemView.simEditText.visibility = View.INVISIBLE
+                        itemView.changeButton.text = "Sửa"
+                        if(simNumber != itemView.simEditText.text.toString()) {
+                            itemView.simTextView.text = itemView.simEditText.text
+                            PrefsUtil.getInstance(context).savePref(simNumber, itemView.simEditText.text.toString())
+                        }
+                    } else {
+                        itemView.simTextView.visibility = View.INVISIBLE
+                        itemView.simEditText.visibility = View.VISIBLE
+                        itemView.changeButton.text = "OK"
+                    }
                 }
 
             })

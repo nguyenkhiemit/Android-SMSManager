@@ -1,16 +1,11 @@
 package sms.newgate.com.smseditor.service
 
 import android.app.Service
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.IBinder
 import android.provider.Telephony
-import android.support.v7.app.AlertDialog
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.database.*
-import org.greenrobot.eventbus.EventBus
 import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.util.MessageHelper
 import sms.newgate.com.smseditor.util.TelephoneUtil
@@ -28,7 +23,7 @@ class FirebaseMsgService : Service() {
     }
 
     fun updateMessage(message: SmsThread) {
-        databasePre.child(message.id).updateChildren(message.toMap())
+        databasePre.child(message.simSerialNumber + " - " + message.id).updateChildren(message.toMap())
     }
 
     override fun onCreate() {
@@ -44,6 +39,7 @@ class FirebaseMsgService : Service() {
             }
 
             override fun onChildChanged(data: DataSnapshot?, p1: String?) {
+                Log.e("XonChildChanged", "===> 1")
                 val message: SmsThread? = data?.getValue(SmsThread::class.java)
                 if(message != null && message.simSerialNumber != simSerialNumber) {
                     return
@@ -61,6 +57,7 @@ class FirebaseMsgService : Service() {
                     startActivity(intent)
                 } else {
                     if (message != null) {
+                        Log.e("XonChildChanged", "===> 2")
                         helper.updateMessage(message)
                     }
                 }

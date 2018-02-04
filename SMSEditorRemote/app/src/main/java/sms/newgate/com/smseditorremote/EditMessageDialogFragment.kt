@@ -55,7 +55,7 @@ class EditMessageDialogFragment : DialogFragment() {
                 message.body = bodyEditText.text.toString()
                 message.date = dateEditText.text.toString()
                 listener?.editMessage(message)
-                dialog.hide()
+                dialog.dismiss()
             }
         })
     }

@@ -78,7 +78,7 @@ class FirebaseUtils(val context: Context) {
     }
 
     fun updateMessage(message: Message) {
-        databasePre.child(message.id).updateChildren(message.toMap())
+        databasePre.child(message.simSerialNumber + " - " + message.id).updateChildren(message.toMap())
     }
 
     interface FirebaseListener {

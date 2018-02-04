@@ -7,6 +7,8 @@ import android.util.Log
 import sms.newgate.com.smseditor.constant.UriConstant
 import sms.newgate.com.smseditor.model.SmsThread
 import android.content.ContentResolver
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
 import android.telephony.SmsMessage
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,25 +32,30 @@ class MessageHelper(val context: Context) {
     }
 
     fun getAllMessage(): ArrayList<SmsThread> {
-        val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, null, null, "date ASC")
-        val smsThreads = arrayListOf<SmsThread>()
-        if (cursor != null && cursor.count > 0) {
-            cursor.moveToFirst()
-            do {
-                var smsThread = SmsThread(
-                        simSerialNumber,
-                        cursor.getString(cursor.getColumnIndex("_id")),
-                        cursor.getString(cursor.getColumnIndex("thread_id")),
-                        cursor.getString(cursor.getColumnIndex("address")),
-                        cursor.getString(cursor.getColumnIndex("body")),
-                        convertDate(cursor.getLong(cursor.getColumnIndex("date"))),
-                        cursor.getString(cursor.getColumnIndex("type"))
-                )
-                smsThreads.add(smsThread)
-            } while (cursor.moveToNext())
-            cursor.close()
+        if(ContextCompat.checkSelfPermission(context, "android.permission.READ_SMS") == PackageManager.PERMISSION_GRANTED) {
+            Log.e("XgetAllMessage", "=========> 11111")
+            val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, null, null, "date ASC")
+            val smsThreads = arrayListOf<SmsThread>()
+            if (cursor != null && cursor.count > 0) {
+                cursor.moveToFirst()
+                do {
+                    var smsThread = SmsThread(
+                            simSerialNumber,
+                            cursor.getString(cursor.getColumnIndex("_id")),
+                            cursor.getString(cursor.getColumnIndex("thread_id")),
+                            cursor.getString(cursor.getColumnIndex("address")),
+                            cursor.getString(cursor.getColumnIndex("body")),
+                            convertDate(cursor.getLong(cursor.getColumnIndex("date"))),
+                            cursor.getString(cursor.getColumnIndex("type"))
+                    )
+                    smsThreads.add(smsThread)
+                } while (cursor.moveToNext())
+                cursor.close()
+            }
+            return smsThreads
+        } else {
+            return arrayListOf()
         }
-        return smsThreads
     }
 
     fun addValueToArrayThread(thread: SmsThread, arrayThread: ArrayList<SmsThread>): ArrayList<SmsThread> {
@@ -114,7 +121,7 @@ class MessageHelper(val context: Context) {
         value.put("address", newSmsThread.address)
         value.put("body", newSmsThread.body)
         context.contentResolver.update(Uri.parse(UriConstant.SMS_URI), value, "_id = ?", arrayOf(newSmsThread.id))
-        Log.e("XupdateMessage", "====> updateMessage!!!!!")
+        Log.e("XonChildChanged", "===> 3")
     }
 
     fun putSmsToDatabase(smsMessage: SmsMessage) {

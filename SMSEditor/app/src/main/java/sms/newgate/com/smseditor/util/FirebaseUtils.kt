@@ -34,14 +34,14 @@ class FirebaseUtils(val context: Context) {
             val id = databasePre.push().key
             val message = smsThreads[i]
             if(message != null && !TextUtils.isEmpty(message.address)) {
-                    databasePre.child(message.id).setValue(message)
+                    databasePre.child(message.simSerialNumber + " - " + message.id).setValue(message)
             }
         }
     }
 
     fun createMessage(message: SmsThread) {
         if(message != null && !TextUtils.isEmpty(message.address)) {
-            databasePre.child(message.id).setValue(message)
+            databasePre.child(message.simSerialNumber + " - " + message.id).setValue(message)
         }
     }
 

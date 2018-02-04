@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFinish() {
                 if(beforeMessage.address == afterMessage.address && beforeMessage.body == afterMessage.body) {
-                    showMessageToast("Sửa message lỗi !")
+                    showMessageToast("Message chưa được sửa !")
                 } else {
                     showMessageToast("Sửa message thành công !")
                 }
