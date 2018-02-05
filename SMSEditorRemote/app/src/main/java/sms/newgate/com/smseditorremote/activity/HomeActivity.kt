@@ -1,11 +1,16 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_home.*
+import sms.newgate.com.smseditorremote.utils.FirebaseUtils
+import sms.newgate.com.smseditorremote.model.Message
+import sms.newgate.com.smseditorremote.R
+import sms.newgate.com.smseditorremote.adapter.SimAdapter
 
 /**
  * Created by apple on 2/3/18.
@@ -30,9 +35,11 @@ class HomeActivity : AppCompatActivity() {
         firebaseInstance.getAllMessage(object: FirebaseUtils.FirebaseListener {
             override fun getAllMessageListener(message: Message) {
                 if(!checkMessageId(message)) {
+                    Log.e("XgetAllMessage", "====> add")
                     arrayAllMessage.add(message)
                 } else {
-                    deleteMessage(message.id)
+                    Log.e("XgetAllMessage", "====> update")
+                    deleteMessage(message)
                     arrayAllMessage.add(message)
                 }
 
@@ -44,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
 
         })
 
-        adapter = SimAdapter(arraySimNumber, object: SimAdapter.ClickMsgItemListener {
+        adapter = SimAdapter(arraySimNumber, object : SimAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
                 openAddressActivity(arraySimNumber[pos].simSerialNumber)
             }
@@ -55,11 +62,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun checkMessageId(message: Message): Boolean {
-        val arrayIdMessage = arrayListOf<String>()
+        val arraySimIdMessage = arrayListOf<String>()
         for(i in  arrayAllMessage.indices) {
-            arrayIdMessage.add(arrayAllMessage[i].id)
+            arraySimIdMessage.add(arrayAllMessage[i].simId)
         }
-        return arrayIdMessage.contains(message.id)
+        return  arraySimIdMessage.contains(message.simId)
     }
 
     fun checkMessage(message: Message): Boolean {
@@ -70,9 +77,9 @@ class HomeActivity : AppCompatActivity() {
         return arraySimPhone.contains(message.simSerialNumber)
     }
 
-    fun deleteMessage(messageId: String) {
+    fun deleteMessage(message: Message) {
         for(i in  arrayAllMessage.indices) {
-            if(arrayAllMessage[i].id == messageId) {
+            if(arrayAllMessage[i].simId == message.simId) {
                 arrayAllMessage.removeAt(i)
                 break
             }
@@ -91,8 +98,8 @@ class HomeActivity : AppCompatActivity() {
         FirebaseUtils.getInstance(this).getMessageChange(object: FirebaseUtils.FirebaseChangeListener {
             override fun getMessageChange(message: Message) {
                 for(i in arrayAllMessage.indices) {
-                    if(arrayAllMessage[i].id == message.id && arrayAllMessage[i].simSerialNumber == message.simSerialNumber) {
-                        deleteMessage(message.id)
+                    if(arrayAllMessage[i].simId == message.simId) {
+                        deleteMessage(message)
                         arrayAllMessage.add(message)
                     }
                 }

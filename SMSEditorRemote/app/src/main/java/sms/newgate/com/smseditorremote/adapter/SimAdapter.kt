@@ -1,14 +1,14 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.message_item_layout.view.*
 import kotlinx.android.synthetic.main.sim_item_layout.view.*
+import sms.newgate.com.smseditorremote.model.Message
+import sms.newgate.com.smseditorremote.utils.PrefsUtil
+import sms.newgate.com.smseditorremote.R
 
 
 /**

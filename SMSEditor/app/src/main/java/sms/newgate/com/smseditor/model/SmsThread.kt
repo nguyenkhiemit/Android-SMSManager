@@ -9,7 +9,7 @@ import com.google.firebase.database.IgnoreExtraProperties
  * Created by apple on 1/17/18.
  */
 @IgnoreExtraProperties
-class SmsThread: Parcelable {
+class SmsThread : Parcelable {
 
     var simSerialNumber: String = ""
     var id: String = ""
@@ -18,6 +18,20 @@ class SmsThread: Parcelable {
     var body: String = ""
     var date: String = ""
     var type: String = ""
+    var simId: String = ""
+    var status: Boolean = false
+
+    constructor(parcel: Parcel) : this() {
+        simSerialNumber = parcel.readString()
+        id = parcel.readString()
+        threadId = parcel.readString()
+        address = parcel.readString()
+        body = parcel.readString()
+        date = parcel.readString()
+        type = parcel.readString()
+        simId = parcel.readString()
+        status = parcel.readByte() != 0.toByte()
+    }
 
     constructor()
 
@@ -27,7 +41,9 @@ class SmsThread: Parcelable {
                 address: String,
                 body: String,
                 date: String,
-                type: String) {
+                type: String,
+                simId: String,
+                status: Boolean) {
         this.simSerialNumber = simSerialNumber
         this.id = id
         this.threadId = threadId
@@ -35,16 +51,24 @@ class SmsThread: Parcelable {
         this.body = body
         this.date = date
         this.type = type
+        this.simId = simId
+        this.status = status
     }
 
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString())
+    @Exclude
+    fun toMap(): HashMap<String, Any> {
+        var result = HashMap<String, Any>()
+        result.put("simSerialNumber", simSerialNumber)
+        result.put("id", id)
+        result.put("thread_id", threadId)
+        result.put("address", address)
+        result.put("body", body)
+        result.put("date", date)
+        result.put("type", type)
+        result.put("simId", simId)
+        result.put("status", false)
+        return result
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(simSerialNumber)
@@ -54,6 +78,8 @@ class SmsThread: Parcelable {
         parcel.writeString(body)
         parcel.writeString(date)
         parcel.writeString(type)
+        parcel.writeString(simId)
+        parcel.writeByte(if (status) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -70,17 +96,5 @@ class SmsThread: Parcelable {
         }
     }
 
-    @Exclude
-    fun toMap(): HashMap<String, Any> {
-        var result = HashMap<String, Any>()
-        result.put("simSerialNumber", simSerialNumber)
-        result.put("id", id)
-        result.put("thread_id", threadId)
-        result.put("address", address)
-        result.put("body", body)
-        result.put("date", date)
-        result.put("type", type)
-        return result
-    }
 
 }

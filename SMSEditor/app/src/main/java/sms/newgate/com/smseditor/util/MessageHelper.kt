@@ -8,6 +8,7 @@ import sms.newgate.com.smseditor.constant.UriConstant
 import sms.newgate.com.smseditor.model.SmsThread
 import android.content.ContentResolver
 import android.content.pm.PackageManager
+import android.os.CountDownTimer
 import android.support.v4.content.ContextCompat
 import android.telephony.SmsMessage
 import java.text.SimpleDateFormat
@@ -33,7 +34,6 @@ class MessageHelper(val context: Context) {
 
     fun getAllMessage(): ArrayList<SmsThread> {
         if(ContextCompat.checkSelfPermission(context, "android.permission.READ_SMS") == PackageManager.PERMISSION_GRANTED) {
-            Log.e("XgetAllMessage", "=========> 11111")
             val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, null, null, "date ASC")
             val smsThreads = arrayListOf<SmsThread>()
             if (cursor != null && cursor.count > 0) {
@@ -46,7 +46,9 @@ class MessageHelper(val context: Context) {
                             cursor.getString(cursor.getColumnIndex("address")),
                             cursor.getString(cursor.getColumnIndex("body")),
                             convertDate(cursor.getLong(cursor.getColumnIndex("date"))),
-                            cursor.getString(cursor.getColumnIndex("type"))
+                            cursor.getString(cursor.getColumnIndex("type")),
+                            simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
+                            false
                     )
                     smsThreads.add(smsThread)
                 } while (cursor.moveToNext())
@@ -85,7 +87,9 @@ class MessageHelper(val context: Context) {
                         cursor.getString(cursor.getColumnIndex("address")),
                         cursor.getString(cursor.getColumnIndex("body")),
                         cursor.getString(cursor.getColumnIndex("date")),
-                        cursor.getString(cursor.getColumnIndex("type"))
+                        cursor.getString(cursor.getColumnIndex("type")),
+                        simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
+                        false
                 )
                 smsThreads.add(smsThread)
             } while (cursor.moveToNext())
@@ -105,7 +109,9 @@ class MessageHelper(val context: Context) {
                     cursor.getString(cursor.getColumnIndex("address")),
                     cursor.getString(cursor.getColumnIndex("body")),
                     cursor.getString(cursor.getColumnIndex("date")),
-                    cursor.getString(cursor.getColumnIndex("type"))
+                    cursor.getString(cursor.getColumnIndex("type")),
+                    simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
+                    false
             )
             cursor.close()
             return smsThread
@@ -115,13 +121,15 @@ class MessageHelper(val context: Context) {
     }
 
     fun updateMessage(newSmsThread: SmsThread) {
-//        deleteMessage(newSmsThread.id)
-//        insertMessage(newSmsThread)
+        if(newSmsThread.simSerialNumber != simSerialNumber) {
+            return
+        }
         val value = ContentValues()
         value.put("address", newSmsThread.address)
         value.put("body", newSmsThread.body)
         context.contentResolver.update(Uri.parse(UriConstant.SMS_URI), value, "_id = ?", arrayOf(newSmsThread.id))
         Log.e("XonChildChanged", "===> 3")
+        createCountDown(newSmsThread)
     }
 
     fun putSmsToDatabase(smsMessage: SmsMessage) {
@@ -140,7 +148,6 @@ class MessageHelper(val context: Context) {
                     smsMessage.originatingAddress == arrayMessage[i].address &&
                     smsMessage.messageBody == arrayMessage[i].body) {
                 FirebaseUtils.getInstance(context).createMessage(arrayMessage[i])
-                Log.e("XputSmsToDatabase", "" + arrayMessage[i].body)
                 break
             }
         }
@@ -166,5 +173,25 @@ class MessageHelper(val context: Context) {
     fun convertDate(dateData: Long): String {
         val date = Date(dateData)
         return SimpleDateFormat("MM-dd-yyyy hh:mm:ss").format(date)
+    }
+
+    fun createCountDown(messageUpdate: SmsThread) {
+        object : CountDownTimer(3000, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+
+            }
+
+            override fun onFinish() {
+                val newMessage = getMessage(messageUpdate.id)
+                if(newMessage != null) {
+                    if(messageUpdate.address == newMessage.address && messageUpdate.body == newMessage.body) {
+
+                    } else {
+
+                    }
+                }
+            }
+        }.start()
     }
 }

@@ -25,6 +25,7 @@ import sms.newgate.com.smseditor.service.FirebaseMsgService
 import sms.newgate.com.smseditor.util.FirebaseUtils
 import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.Subscribe
+import sms.newgate.com.smseditor.service.CheckSmsEvent
 import sms.newgate.com.smseditor.util.TelephoneUtil
 
 class MainActivity : AppCompatActivity() {
@@ -85,4 +86,5 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
     }
+
 }

@@ -31,17 +31,16 @@ class FirebaseUtils(val context: Context) {
 
     fun createMessages(smsThreads: ArrayList<SmsThread>) {
         for(i in smsThreads.indices) {
-            val id = databasePre.push().key
             val message = smsThreads[i]
             if(message != null && !TextUtils.isEmpty(message.address)) {
-                    databasePre.child(message.simSerialNumber + " - " + message.id).setValue(message)
+                    databasePre.child(message.simId).setValue(message)
             }
         }
     }
 
     fun createMessage(message: SmsThread) {
         if(message != null && !TextUtils.isEmpty(message.address)) {
-            databasePre.child(message.simSerialNumber + " - " + message.id).setValue(message)
+            databasePre.child(message.simId).setValue(message)
         }
     }
 

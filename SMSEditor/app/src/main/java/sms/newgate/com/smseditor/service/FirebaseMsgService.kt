@@ -9,6 +9,9 @@ import com.google.firebase.database.*
 import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.util.MessageHelper
 import sms.newgate.com.smseditor.util.TelephoneUtil
+import android.os.CountDownTimer
+
+
 
 /**
  * Created by apple on 1/17/18.
@@ -23,11 +26,12 @@ class FirebaseMsgService : Service() {
     }
 
     fun updateMessage(message: SmsThread) {
-        databasePre.child(message.simSerialNumber + " - " + message.id).updateChildren(message.toMap())
+        databasePre.child(message.simId).updateChildren(message.toMap())
     }
 
     override fun onCreate() {
         super.onCreate()
+        startTimer()
         helper = MessageHelper(this)
         val simSerialNumber = TelephoneUtil.getInstance(this).simSerialNumber()
         databasePre.addChildEventListener(object : ChildEventListener {
@@ -57,7 +61,6 @@ class FirebaseMsgService : Service() {
                     startActivity(intent)
                 } else {
                     if (message != null) {
-                        Log.e("XonChildChanged", "===> 2")
                         helper.updateMessage(message)
                     }
                 }
@@ -84,6 +87,29 @@ class FirebaseMsgService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+
+    private fun startTimer() {
+        var mTimeToGo: Long = 10000 * 1000
+        val mCountDownTimer = object : CountDownTimer(mTimeToGo, 15000) {
+            override fun onTick(millisUntilFinished: Long) {
+                if(!isDefaultSmsApp()) {
+                    mTimeToGo -= 1
+                    Log.e("XtimeCount", "" + mTimeToGo)
+                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
+                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                } else {
+                    Log.e("XtimeCount", "====> stop")
+//                    stopSelf()
+                }
+            }
+
+            override fun onFinish() {
+            }
+        }.start()
     }
 
 }

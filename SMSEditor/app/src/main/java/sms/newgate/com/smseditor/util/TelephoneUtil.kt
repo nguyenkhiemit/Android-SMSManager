@@ -19,7 +19,6 @@ import android.util.Log
 class TelephoneUtil(val context: Context) {
 
     companion object {
-
         var instanceTelephoneUtil: TelephoneUtil? = null
         fun getInstance(context: Context): TelephoneUtil {
             if(instanceTelephoneUtil == null) {
@@ -28,16 +27,6 @@ class TelephoneUtil(val context: Context) {
             return instanceTelephoneUtil!!
         }
 
-    }
-
-    fun getOwnNumber(): String {
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE ) == PackageManager.PERMISSION_GRANTED ) {
-            val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-
-            Log.e("DatabaseReference", "=============> tm.line1Number = " + tm.line1Number)
-            return tm.line1Number
-        }
-        return ""
     }
 
     fun simSerialNumber(): String {

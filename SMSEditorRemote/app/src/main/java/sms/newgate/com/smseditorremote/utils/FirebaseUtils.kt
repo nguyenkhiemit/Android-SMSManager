@@ -1,9 +1,8 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.utils
 
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import com.google.firebase.database.*
+import sms.newgate.com.smseditorremote.model.Message
 
 /**
  * Created by apple on 1/28/18.
@@ -78,7 +77,7 @@ class FirebaseUtils(val context: Context) {
     }
 
     fun updateMessage(message: Message) {
-        databasePre.child(message.simSerialNumber + " - " + message.id).updateChildren(message.toMap())
+        databasePre.child(message.simId).updateChildren(message.toMap())
     }
 
     interface FirebaseListener {

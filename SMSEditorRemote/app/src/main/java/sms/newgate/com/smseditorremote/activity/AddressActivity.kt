@@ -1,14 +1,16 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_address.*
-import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.sim_item_layout.view.*
+import sms.newgate.com.smseditorremote.*
+import sms.newgate.com.smseditorremote.adapter.AddressAdapter
+import sms.newgate.com.smseditorremote.model.Message
+import sms.newgate.com.smseditorremote.utils.FirebaseUtils
+import sms.newgate.com.smseditorremote.utils.PrefsUtil
 
 /**
  * Created by apple on 2/3/18.
@@ -43,11 +45,12 @@ class AddressActivity : AppCompatActivity() {
 
         arrayAllMessage = intent.extras.getParcelableArrayList("allmessage")
 
+
         arraySimMessage.addAll(getSimMessage())
 
         loadAddress()
 
-        adapter = AddressAdapter(arrayAddress, object: AddressAdapter.ClickMsgItemListener {
+        adapter = AddressAdapter(arrayAddress, object : AddressAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
                 openMainActivity(arrayAddress[pos].address)
             }
@@ -81,7 +84,7 @@ class AddressActivity : AppCompatActivity() {
         var arraySimMessage: ArrayList<Message> = arrayListOf()
         for(i in arrayAllMessage.indices) {
             if(arrayAllMessage[i].simSerialNumber == simNumber) {
-                arraySimMessage.add(arrayAllMessage[i])
+                 arraySimMessage.add(arrayAllMessage[i])
             }
         }
         return arraySimMessage
@@ -94,9 +97,9 @@ class AddressActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun deleteMessage(messageId: String) {
+    fun deleteMessage(simId: String) {
         for(i in  arraySimMessage.indices) {
-            if(arraySimMessage[i].id == messageId) {
+            if(arraySimMessage[i].simId == simId) {
                 arraySimMessage.removeAt(i)
                 break
             }
@@ -110,8 +113,8 @@ class AddressActivity : AppCompatActivity() {
                 if(message.simSerialNumber != simNumber)
                     return
                 for(i in arraySimMessage.indices) {
-                    if(arraySimMessage[i].id == message.id) {
-                        deleteMessage(message.id)
+                    if(arraySimMessage[i].simId == message.simId) {
+                        deleteMessage(message.simId)
                         arraySimMessage.add(message)
                     }
                 }

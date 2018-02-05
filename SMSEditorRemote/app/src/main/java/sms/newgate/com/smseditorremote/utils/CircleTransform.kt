@@ -1,4 +1,4 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.utils
 
 import android.graphics.*
 import com.squareup.picasso.Transformation

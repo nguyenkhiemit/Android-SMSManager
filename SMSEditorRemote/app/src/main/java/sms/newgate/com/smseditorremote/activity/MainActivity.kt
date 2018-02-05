@@ -1,13 +1,16 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import android.os.CountDownTimer
 import android.widget.Toast
+import sms.newgate.com.smseditorremote.*
+import sms.newgate.com.smseditorremote.adapter.MsgAdapter
+import sms.newgate.com.smseditorremote.model.Message
+import sms.newgate.com.smseditorremote.utils.FirebaseUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 
         arrayMessage.addAll(checkMessageAddress())
 
-        adapter = MsgAdapter(arrayMessage, object: MsgAdapter.ClickMsgItemListener {
+        adapter = MsgAdapter(arrayMessage, object : MsgAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
                 openDialogEditor(pos)
             }
@@ -61,21 +64,13 @@ class MainActivity : AppCompatActivity() {
         return arrayMessage
     }
 
-    fun deleteMessage(messageId: String) {
+    fun deleteMessage(simId: String) {
         for(i in  arrayMessage.indices) {
-            if(arrayMessage[i].id == messageId) {
+            if(arrayMessage[i].simId == simId) {
                 arrayMessage.removeAt(i)
                 break
             }
         }
-    }
-
-    fun checkMessage(message: Message): Boolean {
-        val arrayIdMessage = arrayListOf<String>()
-        for(i in  arrayMessage.indices) {
-            arrayIdMessage.add(arrayMessage[i].id)
-        }
-        return arrayIdMessage.contains(message.id)
     }
 
     fun openDialogEditor(pos: Int) {
@@ -99,9 +94,9 @@ class MainActivity : AppCompatActivity() {
         FirebaseUtils.getInstance(this).getMessageChange(object: FirebaseUtils.FirebaseChangeListener {
             override fun getMessageChange(message: Message) {
                 for(i in arrayMessage.indices) {
-                    if(arrayMessage[i].id == message.id && arrayMessage[i].simSerialNumber == message.simSerialNumber) {
+                    if(arrayMessage[i].simId == message.simId) {
                         afterMessage = message
-                        deleteMessage(message.id)
+                        deleteMessage(message.simId)
                         arrayMessage.add(message)
                         adapter.notifyDataSetChanged()
                     }

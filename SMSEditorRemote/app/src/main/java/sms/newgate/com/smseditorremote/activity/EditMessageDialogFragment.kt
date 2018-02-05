@@ -1,15 +1,14 @@
-package sms.newgate.com.smseditorremote
+package sms.newgate.com.smseditorremote.activity
 
 import android.app.DialogFragment
-import android.content.ContentValues
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import kotlinx.android.synthetic.main.layout_edit_msg.*
+import sms.newgate.com.smseditorremote.model.Message
+import sms.newgate.com.smseditorremote.R
+
 /**
  * Created by apple on 1/28/18.
  */
