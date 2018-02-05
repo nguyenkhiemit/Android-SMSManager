@@ -42,13 +42,12 @@ class MessageHelper(val context: Context) {
                     var smsThread = SmsThread(
                             simSerialNumber,
                             cursor.getString(cursor.getColumnIndex("_id")),
-                            cursor.getString(cursor.getColumnIndex("thread_id")),
                             cursor.getString(cursor.getColumnIndex("address")),
                             cursor.getString(cursor.getColumnIndex("body")),
                             convertDate(cursor.getLong(cursor.getColumnIndex("date"))),
                             cursor.getString(cursor.getColumnIndex("type")),
                             simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
-                            false
+                            0
                     )
                     smsThreads.add(smsThread)
                 } while (cursor.moveToNext())
@@ -83,13 +82,12 @@ class MessageHelper(val context: Context) {
                 var smsThread = SmsThread(
                         simSerialNumber,
                         cursor.getString(cursor.getColumnIndex("_id")),
-                        cursor.getString(cursor.getColumnIndex("thread_id")),
                         cursor.getString(cursor.getColumnIndex("address")),
                         cursor.getString(cursor.getColumnIndex("body")),
                         cursor.getString(cursor.getColumnIndex("date")),
                         cursor.getString(cursor.getColumnIndex("type")),
                         simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
-                        false
+                        0
                 )
                 smsThreads.add(smsThread)
             } while (cursor.moveToNext())
@@ -105,13 +103,12 @@ class MessageHelper(val context: Context) {
             val smsThread = SmsThread(
                     simSerialNumber,
                     cursor.getString(cursor.getColumnIndex("_id")),
-                    cursor.getString(cursor.getColumnIndex("thread_id")),
                     cursor.getString(cursor.getColumnIndex("address")),
                     cursor.getString(cursor.getColumnIndex("body")),
                     cursor.getString(cursor.getColumnIndex("date")),
                     cursor.getString(cursor.getColumnIndex("type")),
                     simSerialNumber + "-" + cursor.getString(cursor.getColumnIndex("_id")),
-                    false
+                    0
             )
             cursor.close()
             return smsThread
@@ -156,7 +153,6 @@ class MessageHelper(val context: Context) {
     fun insertMessage(smsThread: SmsThread) {
         val value = ContentValues()
         value.put("_id", smsThread.id)
-        value.put("thread_id", smsThread.threadId)
         value.put("address", smsThread.address)
         value.put("body", smsThread.body)
         value.put("date", smsThread.date)

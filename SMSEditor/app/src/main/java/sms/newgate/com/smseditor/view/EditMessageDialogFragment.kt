@@ -55,7 +55,6 @@ class EditMessageDialogFragment : DialogFragment() {
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         val smsThread = arguments.getParcelable<SmsThread>("smsthread")
         smsMessageId = smsThread.id
-        val smsMessageThreadId = smsThread.threadId
         val smsMessageType = smsThread.type
         val smsMessageAddress = smsThread.address
         addressEditText.setText(smsThread.address)
@@ -65,7 +64,6 @@ class EditMessageDialogFragment : DialogFragment() {
             override fun onClick(p0: View?) {
                 val smsThread = SmsThread()
                 smsThread.id = smsMessageId
-                smsThread.threadId = smsMessageThreadId
                 smsThread.type = smsMessageType
                 smsThread.address = addressEditText.text.toString()
                 smsThread.body = bodyEditText.text.toString()

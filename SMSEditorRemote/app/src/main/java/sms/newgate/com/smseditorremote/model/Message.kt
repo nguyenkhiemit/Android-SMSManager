@@ -20,7 +20,7 @@ class Message : Parcelable {
     var date: String = ""
     var type: String = ""
     var simId: String = ""
-    var status: Boolean = false
+    var status: Int = 0
 
     constructor(parcel: Parcel) : this() {
         simSerialNumber = parcel.readString()
@@ -31,7 +31,7 @@ class Message : Parcelable {
         date = parcel.readString()
         type = parcel.readString()
         simId = parcel.readString()
-        status = parcel.readByte() != 0.toByte()
+        status = parcel.readInt()
     }
 
     constructor()
@@ -44,7 +44,7 @@ class Message : Parcelable {
                 date: String,
                 type: String,
                 simId: String,
-                status: Boolean) {
+                status: Int) {
         this.simSerialNumber = simSerialNumber
         this.id = id
         this.threadId = threadId
@@ -53,7 +53,7 @@ class Message : Parcelable {
         this.date = date
         this.type = type
         this.simId = simId
-        this.status = status
+        this.status = 0
     }
 
     @Exclude
@@ -80,7 +80,7 @@ class Message : Parcelable {
         parcel.writeString(date)
         parcel.writeString(type)
         parcel.writeString(simId)
-        parcel.writeByte(if (status) 1 else 0)
+        parcel.writeInt(status)
     }
 
     override fun describeContents(): Int {

@@ -13,40 +13,36 @@ class SmsThread : Parcelable {
 
     var simSerialNumber: String = ""
     var id: String = ""
-    var threadId: String = ""
     var address: String = ""
     var body: String = ""
     var date: String = ""
     var type: String = ""
     var simId: String = ""
-    var status: Boolean = false
+    var status: Int = 0
 
     constructor(parcel: Parcel) : this() {
         simSerialNumber = parcel.readString()
         id = parcel.readString()
-        threadId = parcel.readString()
         address = parcel.readString()
         body = parcel.readString()
         date = parcel.readString()
         type = parcel.readString()
         simId = parcel.readString()
-        status = parcel.readByte() != 0.toByte()
+        status = parcel.readInt()
     }
 
     constructor()
 
     constructor(simSerialNumber: String,
                 id: String,
-                threadId: String,
                 address: String,
                 body: String,
                 date: String,
                 type: String,
                 simId: String,
-                status: Boolean) {
+                status: Int) {
         this.simSerialNumber = simSerialNumber
         this.id = id
-        this.threadId = threadId
         this.address = address
         this.body = body
         this.date = date
@@ -60,26 +56,24 @@ class SmsThread : Parcelable {
         var result = HashMap<String, Any>()
         result.put("simSerialNumber", simSerialNumber)
         result.put("id", id)
-        result.put("thread_id", threadId)
         result.put("address", address)
         result.put("body", body)
         result.put("date", date)
         result.put("type", type)
         result.put("simId", simId)
-        result.put("status", false)
+        result.put("status", 0)
         return result
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(simSerialNumber)
         parcel.writeString(id)
-        parcel.writeString(threadId)
         parcel.writeString(address)
         parcel.writeString(body)
         parcel.writeString(date)
         parcel.writeString(type)
         parcel.writeString(simId)
-        parcel.writeByte(if (status) 1 else 0)
+        parcel.writeInt(0)
     }
 
     override fun describeContents(): Int {

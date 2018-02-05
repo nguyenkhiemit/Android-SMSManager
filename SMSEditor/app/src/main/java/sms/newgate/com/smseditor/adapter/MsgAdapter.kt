@@ -40,9 +40,6 @@ class MsgAdapter(val smsThreads: ArrayList<SmsThread>, val listener: ClickMsgIte
             itemView.bodyText.text = msmThread.body
             itemView.setOnClickListener(object: View.OnClickListener {
                 override fun onClick(view: View?) {
-                    val intent = Intent(context, DetailMessageActivity::class.java)
-                    intent.putExtra("thread_id", msmThread.threadId)
-                    context.startActivity(intent)
                 }
 
             })
