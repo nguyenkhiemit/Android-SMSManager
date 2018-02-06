@@ -65,6 +65,7 @@ class MsgAdapter(val smsThreads: ArrayList<Message>, val listener: ClickMsgItemL
             Picasso.with(context).load(R.drawable.ic_friend).placeholder(R.drawable.ic_friend).transform(CircleTransform()).into(itemView.avatarImageFriend)
             itemView.addressTextFriend.text = msmThread.address
             itemView.bodyTextFriend.text = msmThread.body
+            itemView.timeTextFriend.text = msmThread.date
             itemView.setOnClickListener(object: View.OnClickListener {
                 override fun onClick(view: View?) {
                     listener.click(pos)
@@ -79,6 +80,7 @@ class MsgAdapter(val smsThreads: ArrayList<Message>, val listener: ClickMsgItemL
             Picasso.with(context).load(R.drawable.ic_avatar).placeholder(R.drawable.ic_avatar).transform(CircleTransform()).into(itemView.avatarImage)
             itemView.addressText.text = msmThread.address
             itemView.bodyText.text = msmThread.body
+            itemView.timeText.text = msmThread.date
             itemView.setOnClickListener(object: View.OnClickListener {
                 override fun onClick(view: View?) {
                     listener.click(pos)

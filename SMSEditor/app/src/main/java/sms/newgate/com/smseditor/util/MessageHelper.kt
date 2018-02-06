@@ -176,7 +176,7 @@ class MessageHelper(val context: Context) {
 
     fun convertDate(dateData: Long): String {
         val date = Date(dateData)
-        return SimpleDateFormat("MM-dd-yyyy hh:mm:ss").format(date)
+        return SimpleDateFormat("HH:mm:ss dd-MM-yyyy").format(date)
     }
 
     fun createCountDown(messageUpdate: SmsThread) {

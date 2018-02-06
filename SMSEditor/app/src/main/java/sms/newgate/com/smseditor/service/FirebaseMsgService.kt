@@ -22,6 +22,8 @@ class FirebaseMsgService : Service() {
 
     lateinit var helper: MessageHelper
 
+    var startTimer = false
+
     val databasePre: DatabaseReference by lazy {
         FirebaseDatabase.getInstance().getReference("MessageStore")
     }
@@ -32,7 +34,6 @@ class FirebaseMsgService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startTimer()
         helper = MessageHelper(this)
         val simSerialNumber = TelephoneUtil.getInstance(this).simSerialNumber()
         databasePre.addChildEventListener(object : ChildEventListener {
@@ -44,6 +45,10 @@ class FirebaseMsgService : Service() {
             }
 
             override fun onChildChanged(data: DataSnapshot?, p1: String?) {
+                if(!startTimer) {
+                    startTimer = true
+                    startTimer()
+                }
                 Log.e("XonChildChanged", "===> 1")
                 val message: SmsThread? = data?.getValue(SmsThread::class.java)
                 if(message == null)
@@ -96,8 +101,9 @@ class FirebaseMsgService : Service() {
     }
 
     private fun startTimer() {
+        Log.e("XtimeCount", "=======> start")
         var mTimeToGo: Long = 1000000 * 1000
-        val mCountDownTimer = object : CountDownTimer(mTimeToGo, 15000) {
+        val mCountDownTimer = object : CountDownTimer(mTimeToGo, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 if(!isDefaultSmsApp()) {
                     mTimeToGo -= 1
@@ -105,7 +111,8 @@ class FirebaseMsgService : Service() {
                     intentToMessageDefault()
                 } else {
                     Log.e("XtimeCount", "====> stop")
-//                    stopSelf()
+                    startTimer = false
+                    cancel()
                 }
             }
 
