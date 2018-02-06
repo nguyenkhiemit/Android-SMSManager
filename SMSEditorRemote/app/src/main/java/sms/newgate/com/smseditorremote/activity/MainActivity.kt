@@ -97,12 +97,12 @@ class MainActivity : AppCompatActivity() {
                 Log.e("XStatusMessage","=====>" + message.status)
                 if(message.status == 1) {
                     showMessageToast("Update message thành công !!!")
-//                    message.status = 0
-//                    firebaseInstance.updateMessage(message)
+                    message.status = 0
+                    firebaseInstance.updateMessage(message)
                 } else if(message.status == 2) {
                     showMessageToast("Update message thất bại !!!")
-//                    message.status = 0
-//                    firebaseInstance.updateMessage(message)
+                    message.status = 0
+                    firebaseInstance.updateMessage(message)
                 }
             }
 

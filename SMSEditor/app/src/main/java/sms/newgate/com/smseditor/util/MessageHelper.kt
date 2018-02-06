@@ -133,7 +133,7 @@ class MessageHelper(val context: Context) {
         value.put("address", newSmsThread.address)
         value.put("body", newSmsThread.body)
         context.contentResolver.update(Uri.parse(UriConstant.SMS_URI), value, "_id = ?", arrayOf(newSmsThread.id))
-        Log.e("XonChildChanged", "===> 3")
+        Log.e("XcreateCountDown", "===> 3")
         createCountDown(newSmsThread)
     }
 
@@ -190,11 +190,13 @@ class MessageHelper(val context: Context) {
                 val newMessage = getMessage(messageUpdate.id)
                 if(newMessage != null) {
                     if(messageUpdate.address == newMessage.address && messageUpdate.body == newMessage.body) {
-//                        messageUpdate.status = 1 //update success
+                        messageUpdate.status = 1 //update success
+                        Log.e("XcreateCountDown", "===============> 1")
                     } else {
-//                        messageUpdate.status = 2 //update fail
+                        messageUpdate.status = 2 //update fail
+                        Log.e("XcreateCountDown", "===============> 2")
                     }
-//                    databasePre.child(messageUpdate.simId).updateChildren(messageUpdate.toMap())
+                    databasePre.child(messageUpdate.simId).updateChildren(messageUpdate.toMap())
                 }
             }
         }.start()

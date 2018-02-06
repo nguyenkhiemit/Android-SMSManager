@@ -2,6 +2,7 @@ package sms.newgate.com.smseditor.service
 
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.IBinder
 import android.provider.Telephony
 import android.util.Log
@@ -10,7 +11,7 @@ import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.util.MessageHelper
 import sms.newgate.com.smseditor.util.TelephoneUtil
 import android.os.CountDownTimer
-
+import sms.newgate.com.smseditor.constant.UriConstant
 
 
 /**
@@ -45,21 +46,25 @@ class FirebaseMsgService : Service() {
             override fun onChildChanged(data: DataSnapshot?, p1: String?) {
                 Log.e("XonChildChanged", "===> 1")
                 val message: SmsThread? = data?.getValue(SmsThread::class.java)
-                if(message != null && message.simSerialNumber != simSerialNumber) {
+                if(message == null)
                     return
+                if(message.simSerialNumber != simSerialNumber) {
+                    return
+                }
+                val currentMessage = helper.getMessage(message.id)
+                if(currentMessage != null) {
+                    if(message.address == currentMessage.address && message.body == currentMessage.body) {
+                        return
+                    }
                 }
                 if(!isDefaultSmsApp()) {
                     if(message != null) {
-                        val backMessage = helper.getMessage(message.id)
-                        if(backMessage != null) {
-                            backMessage.status = 2 //update fail
-                            updateMessage(backMessage)
+                        if(currentMessage != null) {
+                            currentMessage.status = 2 //update fail
+                            updateMessage(currentMessage)
                         }
                     }
-                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
-                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
+                    intentToMessageDefault()
                 } else {
                     if (message != null) {
                         helper.updateMessage(message)
@@ -92,16 +97,13 @@ class FirebaseMsgService : Service() {
 
 
     private fun startTimer() {
-        var mTimeToGo: Long = 10000 * 1000
+        var mTimeToGo: Long = 1000000 * 1000
         val mCountDownTimer = object : CountDownTimer(mTimeToGo, 15000) {
             override fun onTick(millisUntilFinished: Long) {
                 if(!isDefaultSmsApp()) {
                     mTimeToGo -= 1
                     Log.e("XtimeCount", "" + mTimeToGo)
-                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
-                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
+                    intentToMessageDefault()
                 } else {
                     Log.e("XtimeCount", "====> stop")
 //                    stopSelf()
@@ -111,6 +113,13 @@ class FirebaseMsgService : Service() {
             override fun onFinish() {
             }
         }.start()
+    }
+
+    fun intentToMessageDefault() {
+        val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
+        intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
 }
