@@ -95,7 +95,6 @@ class FirebaseMsgService : Service() {
         return null
     }
 
-
     private fun startTimer() {
         var mTimeToGo: Long = 1000000 * 1000
         val mCountDownTimer = object : CountDownTimer(mTimeToGo, 15000) {
