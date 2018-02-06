@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Toast
 import sms.newgate.com.smseditorremote.*
 import sms.newgate.com.smseditorremote.adapter.MsgAdapter
@@ -22,10 +23,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var arraySimMessage: ArrayList<Message>
 
     var address = ""
-
-    var beforeMessage: Message = Message()
-
-    var afterMessage: Message = Message()
 
     val firebaseInstance by lazy {
         FirebaseUtils.getInstance(this)
@@ -74,8 +71,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openDialogEditor(pos: Int) {
-        beforeMessage.address = arrayMessage[pos].address
-        beforeMessage.body = arrayMessage[pos].body
         var messageEdit = arrayMessage[pos]
         val fm = fragmentManager
         val editMsgDialogFragment = EditMessageDialogFragment.newInstance(messageEdit)
@@ -83,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         editMsgDialogFragment.setEditMessageListener(object: EditMessageDialogFragment.EditMessageListener {
             override fun editMessage(message: Message) {
                 firebaseInstance.updateMessage(message)
-                createCountDown()
             }
 
         })
@@ -95,32 +89,24 @@ class MainActivity : AppCompatActivity() {
             override fun getMessageChange(message: Message) {
                 for(i in arrayMessage.indices) {
                     if(arrayMessage[i].simId == message.simId) {
-                        afterMessage = message
                         deleteMessage(message.simId)
                         arrayMessage.add(message)
                         adapter.notifyDataSetChanged()
                     }
                 }
+                Log.e("XStatusMessage","=====>" + message.status)
+                if(message.status == 1) {
+                    showMessageToast("Update message thành công !!!")
+//                    message.status = 0
+//                    firebaseInstance.updateMessage(message)
+                } else if(message.status == 2) {
+                    showMessageToast("Update message thất bại !!!")
+//                    message.status = 0
+//                    firebaseInstance.updateMessage(message)
+                }
             }
 
         })
-    }
-
-    fun createCountDown() {
-        object : CountDownTimer(3000, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-
-            }
-
-            override fun onFinish() {
-                if(beforeMessage.address == afterMessage.address && beforeMessage.body == afterMessage.body) {
-                    showMessageToast("Message chưa được sửa !")
-                } else {
-                    showMessageToast("Sửa message thành công !")
-                }
-            }
-        }.start()
     }
 
     fun showMessageToast(message: String) {

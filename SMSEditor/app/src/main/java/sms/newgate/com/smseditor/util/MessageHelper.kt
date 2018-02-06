@@ -11,6 +11,8 @@ import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.support.v4.content.ContextCompat
 import android.telephony.SmsMessage
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,6 +23,12 @@ import java.util.*
 class MessageHelper(val context: Context) {
 
     val simSerialNumber = TelephoneUtil.getInstance(context).simSerialNumber()
+
+    var checkUpdateStatus = false
+
+    val databasePre: DatabaseReference by lazy {
+        FirebaseDatabase.getInstance().getReference("MessageStore")
+    }
 
     companion object {
         val MESSAGE_TYPE_INBOX: Int = 1
@@ -172,7 +180,7 @@ class MessageHelper(val context: Context) {
     }
 
     fun createCountDown(messageUpdate: SmsThread) {
-        object : CountDownTimer(3000, 1000) {
+        object : CountDownTimer(2000, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
 
@@ -182,10 +190,11 @@ class MessageHelper(val context: Context) {
                 val newMessage = getMessage(messageUpdate.id)
                 if(newMessage != null) {
                     if(messageUpdate.address == newMessage.address && messageUpdate.body == newMessage.body) {
-
+//                        messageUpdate.status = 1 //update success
                     } else {
-
+//                        messageUpdate.status = 2 //update fail
                     }
+//                    databasePre.child(messageUpdate.simId).updateChildren(messageUpdate.toMap())
                 }
             }
         }.start()

@@ -52,6 +52,7 @@ class FirebaseMsgService : Service() {
                     if(message != null) {
                         val backMessage = helper.getMessage(message.id)
                         if(backMessage != null) {
+                            backMessage.status = 2 //update fail
                             updateMessage(backMessage)
                         }
                     }

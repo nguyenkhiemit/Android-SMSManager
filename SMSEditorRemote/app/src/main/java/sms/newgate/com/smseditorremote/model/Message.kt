@@ -53,7 +53,7 @@ class Message : Parcelable {
         this.date = date
         this.type = type
         this.simId = simId
-        this.status = 0
+        this.status = status
     }
 
     @Exclude

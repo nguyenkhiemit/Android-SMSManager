@@ -61,7 +61,7 @@ class SmsThread : Parcelable {
         result.put("date", date)
         result.put("type", type)
         result.put("simId", simId)
-        result.put("status", 0)
+        result.put("status", status)
         return result
     }
 
@@ -73,7 +73,7 @@ class SmsThread : Parcelable {
         parcel.writeString(date)
         parcel.writeString(type)
         parcel.writeString(simId)
-        parcel.writeInt(0)
+        parcel.writeInt(status)
     }
 
     override fun describeContents(): Int {
