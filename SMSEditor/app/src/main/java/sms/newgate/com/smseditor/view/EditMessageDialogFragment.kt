@@ -1,23 +1,15 @@
 package sms.newgate.com.smseditor.view
 
 import android.app.DialogFragment
-import android.content.ContentValues
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.layout_edit_msg.*
-import kotlinx.android.synthetic.main.msg_thread_item_layout.*
 import sms.newgate.com.smseditor.R
-import sms.newgate.com.smseditor.constant.CommonConstant
 import sms.newgate.com.smseditor.model.SmsThread
-import sms.newgate.com.smseditor.util.MessageHelper
-import java.text.ParseException
-import java.util.concurrent.Executors
 
 /**
  * Created by apple on 1/17/18.

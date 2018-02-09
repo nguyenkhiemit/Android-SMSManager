@@ -100,7 +100,7 @@ class HomeActivity : AppCompatActivity() {
                 for(i in arrayAllMessage.indices) {
                     if(arrayAllMessage[i].simId == message.simId) {
                         deleteMessage(message)
-                        arrayAllMessage.add(message)
+                        arrayAllMessage.add(i, message)
                     }
                 }
             }

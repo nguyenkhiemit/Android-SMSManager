@@ -49,7 +49,7 @@ class FirebaseMsgService : Service() {
                     startTimer = true
                     startTimer()
                 }
-                Log.e("XonChildChanged", "===> 1")
+
                 val message: SmsThread? = data?.getValue(SmsThread::class.java)
                 if(message == null)
                     return
@@ -57,11 +57,15 @@ class FirebaseMsgService : Service() {
                     return
                 }
                 val currentMessage = helper.getMessage(message.id)
+                Log.e("XcreateCountDown", "===============> " + message.date)
+                Log.e("XcreateCountDown", "===============> " + currentMessage?.date)
                 if(currentMessage != null) {
-                    if(message.address == currentMessage.address && message.body == currentMessage.body) {
+                    if(message.address == currentMessage.address && message.body == currentMessage.body
+                            && message.date == currentMessage.date) {
                         return
                     }
                 }
+                Log.e("XcreateCountDown", "===> update")
                 if(!isDefaultSmsApp()) {
                     if(message != null) {
                         if(currentMessage != null) {

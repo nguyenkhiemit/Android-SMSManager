@@ -12,6 +12,8 @@ import sms.newgate.com.smseditorremote.*
 import sms.newgate.com.smseditorremote.adapter.MsgAdapter
 import sms.newgate.com.smseditorremote.model.Message
 import sms.newgate.com.smseditorremote.utils.FirebaseUtils
+import sms.newgate.com.smseditorremote.utils.replaceAddress
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
 
         arrayMessage.addAll(checkMessageAddress())
 
+        Collections.sort(arrayMessage)
+
         adapter = MsgAdapter(arrayMessage, object : MsgAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
                 openDialogEditor(pos)
@@ -54,7 +58,8 @@ class MainActivity : AppCompatActivity() {
     fun checkMessageAddress() : ArrayList<Message> {
         var arrayMessage: ArrayList<Message> = arrayListOf()
         for(i in  arraySimMessage.indices) {
-            if(arraySimMessage[i].address == address) {
+            if(arraySimMessage[i].address == address || arraySimMessage[i].address.replaceAddress() == address ||
+                    arraySimMessage[i].address == address.replaceAddress()) {
                 arrayMessage.add(arraySimMessage[i])
             }
         }
@@ -90,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 for(i in arrayMessage.indices) {
                     if(arrayMessage[i].simId == message.simId) {
                         deleteMessage(message.simId)
-                        arrayMessage.add(message)
+                        arrayMessage.add(i, message)
                         adapter.notifyDataSetChanged()
                     }
                 }

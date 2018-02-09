@@ -4,13 +4,14 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
+import sms.newgate.com.smseditorremote.utils.convertToDate
 
 /**
  * Created by apple on 1/28/18.
  */
 
 @IgnoreExtraProperties
-class Message : Parcelable {
+class Message : Parcelable, Comparable<Message> {
 
     var simSerialNumber: String = ""
     var id: String = ""
@@ -61,7 +62,6 @@ class Message : Parcelable {
         var result = HashMap<String, Any>()
         result.put("simSerialNumber", simSerialNumber)
         result.put("id", id)
-        result.put("thread_id", threadId)
         result.put("address", address)
         result.put("body", body)
         result.put("date", date)
@@ -95,6 +95,21 @@ class Message : Parcelable {
         override fun newArray(size: Int): Array<Message?> {
             return arrayOfNulls(size)
         }
+    }
+
+    override fun compareTo(other: Message): Int {
+        val date = this.date.convertToDate()
+        val otherDate = other.date.convertToDate()
+        if(date != null && otherDate != null) {
+            if (date < otherDate) {
+                return -1
+            } else if(date > otherDate) {
+                return 1
+            } else {
+                return 0
+            }
+        }
+        return 0
     }
 
 }

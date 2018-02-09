@@ -1,8 +1,6 @@
 package sms.newgate.com.smseditor.activity
 
 import android.content.ComponentName
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,20 +11,15 @@ import sms.newgate.com.smseditor.R
 import sms.newgate.com.smseditor.adapter.MsgAdapter
 import sms.newgate.com.smseditor.util.MessageHelper
 import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.Telephony
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.telephony.TelephonyManager
 import android.util.Log
-import com.google.firebase.database.*
-import org.greenrobot.eventbus.EventBus
 import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.service.FirebaseMsgService
 import sms.newgate.com.smseditor.util.FirebaseUtils
-import org.greenrobot.eventbus.ThreadMode
-import org.greenrobot.eventbus.Subscribe
-import sms.newgate.com.smseditor.service.CheckSmsEvent
-import sms.newgate.com.smseditor.util.TelephoneUtil
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,7 +27,12 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var adapter: MsgAdapter
 
-    lateinit var smsThreads: ArrayList<SmsThread>
+    var smsThreads: ArrayList<SmsThread> = arrayListOf()
+
+    companion object {
+        val SMS_REQUEST_CODE = 1000
+        val READ_PHONE_REQUEST_CODE = 1000
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,14 +43,30 @@ class MainActivity : AppCompatActivity() {
 
         helper = MessageHelper(this)
 
-        smsThreads = helper.getAllMessage()
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                Log.e("XMainActivity", "======> a1")
+//                requestPermission(android.Manifest.permission.READ_PHONE_STATE, READ_PHONE_REQUEST_CODE)
+//            }
+//        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+                Log.e("XMainActivity", "======> 1")
+                requestPermission(android.Manifest.permission.READ_SMS, SMS_REQUEST_CODE)
+            } else {
+                Log.e("XMainActivity", "======> 2")
+                smsThreads = helper.getAllMessage()
+            }
+        } else {
+            smsThreads = helper.getAllMessage()
+        }
 
         FirebaseUtils.getInstance(this).createMessages(smsThreads)
 
         adapter = MsgAdapter(smsThreads, object: MsgAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
             }
-
         })
 
         msgThreadRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
@@ -63,6 +77,22 @@ class MainActivity : AppCompatActivity() {
         buttonHidden.setOnClickListener {
             hideIconApp()
         }
+    }
+
+    private fun showExplanation(title: String,
+                                message: String,
+                                permission: String,
+                                permissionRequestCode: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok) { dialog, id -> requestPermission(permission, permissionRequestCode) }
+        builder.create().show()
+    }
+
+    private fun requestPermission(permissionName: String, permissionRequestCode: Int) {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(permissionName), permissionRequestCode)
     }
 
     fun hideIconApp() {
@@ -85,6 +115,21 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            SMS_REQUEST_CODE -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Log.i("XonRequestPermissionsResult", "=========> 111")
+                } else {
+                    smsThreads = helper.getAllMessage()
+                    Log.i("XonRequestPermissionsResult", "=========> 222 =  " + smsThreads.size)
+                    FirebaseUtils.getInstance(this).createMessages(smsThreads)
+                }
+            }
+        }
     }
 
 }

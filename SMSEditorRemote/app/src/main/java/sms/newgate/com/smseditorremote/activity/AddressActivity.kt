@@ -11,6 +11,8 @@ import sms.newgate.com.smseditorremote.adapter.AddressAdapter
 import sms.newgate.com.smseditorremote.model.Message
 import sms.newgate.com.smseditorremote.utils.FirebaseUtils
 import sms.newgate.com.smseditorremote.utils.PrefsUtil
+import sms.newgate.com.smseditorremote.utils.replaceAddress
+import java.util.*
 
 /**
  * Created by apple on 2/3/18.
@@ -62,17 +64,20 @@ class AddressActivity : AppCompatActivity() {
 
 
     fun loadAddress() {
+        arraySimMessage.reverse()
         for(i in arraySimMessage.indices) {
             if(!checkMessageAddress(arraySimMessage[i])) {
                 arrayAddress.add(arraySimMessage[i])
             }
         }
+        Collections.sort(arraySimMessage)
     }
 
     fun checkMessageAddress(message: Message): Boolean {
         var isCheck : Boolean = false
         for(i in  arrayAddress.indices) {
-            if(arrayAddress[i].address == message.address) {
+            if(arrayAddress[i].address == message.address || arrayAddress[i].address.replaceAddress() == message.address
+            || arrayAddress[i].address == message.address.replaceAddress()) {
                 isCheck = true
                 break
             }
@@ -115,7 +120,7 @@ class AddressActivity : AppCompatActivity() {
                 for(i in arraySimMessage.indices) {
                     if(arraySimMessage[i].simId == message.simId) {
                         deleteMessage(message.simId)
-                        arraySimMessage.add(message)
+                        arraySimMessage.add(i, message)
                     }
                 }
             }
