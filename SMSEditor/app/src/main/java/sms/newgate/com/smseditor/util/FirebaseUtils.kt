@@ -40,6 +40,7 @@ class FirebaseUtils(val context: Context) {
 
     fun createMessage(message: SmsThread) {
         if(message != null && !TextUtils.isEmpty(message.address)) {
+            Log.e("XcreateMessage", "=====> new message")
             databasePre.child(message.simId).setValue(message)
         }
     }

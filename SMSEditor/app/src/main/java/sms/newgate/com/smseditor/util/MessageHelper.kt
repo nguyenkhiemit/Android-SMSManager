@@ -17,6 +17,7 @@ import android.telephony.SmsMessage
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import sms.newgate.com.smseditor.activity.MainActivity
+import sms.newgate.com.smseditorremote.utils.PrefsUtil
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,8 +27,6 @@ import kotlin.collections.ArrayList
  * Created by apple on 1/17/18.
  */
 class MessageHelper(val context: Context) {
-
-    val simSerialNumber = TelephoneUtil.getInstance(context).simSerialNumber()
 
     var checkUpdateStatus = false
 
@@ -51,6 +50,7 @@ class MessageHelper(val context: Context) {
 //    }
 
     fun getAllMessage(): ArrayList<SmsThread> {
+        val simSerialNumber = PrefsUtil.getInstance(context).getPref<String>(Constant.SIM_SERIAL_NUMBER)
         Log.e("XgetAllMessage", "============> 1")
         val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, null, null, "date ASC")
         Log.e("XgetAllMessage", "============> 2")
@@ -92,6 +92,7 @@ class MessageHelper(val context: Context) {
     }
 
     fun getThreadMessage(threadId: String): ArrayList<SmsThread> {
+        val simSerialNumber = PrefsUtil.getInstance(context).getPref<String>(Constant.SIM_SERIAL_NUMBER)
         val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, "thread_id = " + threadId, null, "date DESC")
         val smsThreads = arrayListOf<SmsThread>()
 
@@ -116,6 +117,7 @@ class MessageHelper(val context: Context) {
     }
 
     fun getMessage(id: String): SmsThread? {
+        val simSerialNumber = PrefsUtil.getInstance(context).getPref<String>(Constant.SIM_SERIAL_NUMBER)
         val cursor = context.contentResolver.query(Uri.parse(UriConstant.SMS_URI), null, "_id = " + id, null, null)
         if(cursor != null && cursor.count > 0) {
             cursor.moveToFirst()
@@ -137,6 +139,7 @@ class MessageHelper(val context: Context) {
     }
 
     fun updateMessage(newSmsThread: SmsThread) {
+        val simSerialNumber = PrefsUtil.getInstance(context).getPref<String>(Constant.SIM_SERIAL_NUMBER)
         if(newSmsThread.simSerialNumber != simSerialNumber) {
             return
         }
@@ -159,11 +162,13 @@ class MessageHelper(val context: Context) {
         values.put("seen", MESSAGE_IS_NOT_SEEN)
         values.put("body", smsMessage.messageBody)
         context.contentResolver.insert(Uri.parse(UriConstant.SMS_URI), values)
+        Log.e("XcreateMessage", "=====> new message 222")
         val arrayMessage = getAllMessage()
         for(i in 0 ..(arrayMessage.size - 1)) {
             if(smsMessage.timestampMillis.convertToDate() == arrayMessage[i].date &&
                     smsMessage.originatingAddress == arrayMessage[i].address &&
                     smsMessage.messageBody == arrayMessage[i].body) {
+                Log.e("XcreateMessage", "=====> new message 111")
                 FirebaseUtils.getInstance(context).createMessage(arrayMessage[i])
                 break
             }
